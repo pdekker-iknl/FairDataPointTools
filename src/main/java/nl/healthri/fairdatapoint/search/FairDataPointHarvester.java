@@ -26,7 +26,7 @@ public class FairDataPointHarvester implements AutoCloseable {
 
     private final HttpClient client = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.NORMAL)
-            .connectTimeout(Duration.of(500, ChronoUnit.MILLIS))
+            .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
             .build();
 
     public void harvest(URI fdp, FdpRecordStore db) {
@@ -53,8 +53,12 @@ public class FairDataPointHarvester implements AutoCloseable {
             URI u = URI.create(url);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(u)
-                    .header("accept", "*/*")
-                    .header("accept", "application/turtle")
+                    .header("Accept", "*/*")
+                    .header("Accept", "application/turtle")
+                    .header("User-Agent", "Mozilla/5.0")
+                    .header("Accept", "text/turtle")
+                    .timeout(Duration.ofSeconds(20))
+
                     .build();
 
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());

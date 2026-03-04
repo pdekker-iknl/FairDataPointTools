@@ -11,7 +11,7 @@ import static picocli.CommandLine.*;
 
 @Command(name = "FdpTools",
         description = "FdpTools",
-        subcommands = {SaveCommand.class, ValidateCommand.class, SearchCommand.class, PrintCommand.class, CommandLine.HelpCommand.class}
+        subcommands = {SaveCommand.class, DumpCommand.class, ValidateCommand.class, SearchCommand.class, PrintCommand.class, CommandLine.HelpCommand.class}
 )
 public class FdpTools {
 
@@ -21,7 +21,7 @@ public class FdpTools {
     @Spec
     Model.CommandSpec spec;
 
-    public static void main(String... args) {
+    static void main(String... args) {
         int exitCode = new CommandLine(new FdpTools()).execute(args);
         System.exit(exitCode);
     }
@@ -77,6 +77,24 @@ class SaveCommand implements Runnable {
         FdpSaveToDiskApp.run(parent.group.uri(), folder);
     }
 }
+
+@Command(name = "dump", description = "Dump the content of the FDP to a single file")
+class DumpCommand implements Runnable {
+
+    @Option(names = {"--file", "-f"},
+            description = "File used to save to contect of the FDP",
+            required = true)
+    public Path file;
+
+    @ParentCommand
+    FdpTools parent;
+
+    @Override
+    public void run() {
+        FdpDumpToFileApp.run(parent.group.uri(), file);
+    }
+}
+
 
 @Command(name = "print", description = "Print the content of the FDP to screen")
 class PrintCommand implements Runnable {
